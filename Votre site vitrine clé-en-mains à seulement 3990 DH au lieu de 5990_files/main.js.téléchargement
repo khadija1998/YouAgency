@@ -1,0 +1,156 @@
+/*global $,document,window*/
+$(document).ready(function () {
+	'use strict';
+	
+	var scrollold = 0,
+		navAffix = $('.main_navigation'),
+		navAffixMenu = $('.navbar_main'),
+		scrolli = navAffix.offset().top;
+	
+	if (scrolli >= 70) {
+		navAffix.addClass("bg-white");
+		navAffix.find('.navbar-brand img').attr('src', 'images/logoblack.png');
+	}
+	
+	$(window).scroll(function () {
+		
+		var scroll = $(window).scrollTop();
+		if (scroll > scrollold && scroll >= 70 || scroll >= 70) {
+			navAffix.addClass("bg-white");
+			navAffix.find('.navbar-brand img').attr('src', 'images/logoblack.png');
+			scrollold = scroll;
+		} else {
+			navAffix.removeClass("bg-white");
+			navAffix.find('.navbar-brand img').attr('src', 'images/logo.png');
+			scrollold = scroll;
+		}
+		
+	});
+	
+	if ($('.slidehome').length) {
+		$('.slidehome').slick({autoplay: true,dots: false,arrows: true,infinite: true,speed: 3000,fade: true,cssEase: 'linear'});
+	}
+	
+	if($('.grid_references').length){
+		var $grid = $('.grid_references');
+		
+		$('.list_filter .filter').on('click', function () {
+			$(this).addClass('active').siblings().removeClass('active');
+			var $filter = $(this).data('filter');
+			Isotop($filter);
+		});
+		
+		function Isotop(refer){
+			$grid.find('.wow').hide();
+			$grid.find(refer).show();
+		}
+		Isotop('.vitrine');
+	}
+	if ($(".technologies_caros").length) {
+		$(".technologies_caros").slick({autoplay: true,dots: false,arrows: false,infinite: false,speed: 800,slidesToShow: 6,slidesToScroll: 1,cssEase: 'linear',responsive: [{breakpoint: 1199,settings: {slidesToShow: 6}},{breakpoint: 991,settings: {slidesToShow: 5}},{breakpoint: 767,settings: {slidesToShow: 3}},{breakpoint: 575,settings: {slidesToShow: 2}}]});
+	}
+	
+	if ($('.temoignages_caros').length) {
+		$('.temoignages_caros').slick({autoplay: true,dots: true,arrows: false,infinite: true,speed: 1000,fade: false,cssEase: 'ease'});
+	}
+
+	$('.datey').text((new Date()).getFullYear());
+	
+	$(".back-to-top").hide();
+	$(window).scroll(function(){$(this).scrollTop()>100?$(".back-to-top").fadeIn():$(".back-to-top").fadeOut();});
+	$(".back-to-top").click(function(e){e.preventDefault();$("html").animate({scrollTop:0},600);});
+	
+	if($("#map_ma").length){
+		function initMap() {
+			var map = new google.maps.Map(document.getElementById('map_ma'), { zoom: 13, center: { lat: 31.637991362816063, lng: -8.018434345722198 } });
+
+			/*var contentString = 'Adresse';
+			var infowindow = new google.maps.InfoWindow({
+				content: contentString
+			});*/
+			var marker = new google.maps.Marker({
+				position: { lat: 31.637991362816063, lng: -8.018434345722198 },
+				map: map,
+				icon: './images/marker.png'
+			});
+			marker.addListener('click', function () {
+				//infowindow.open(map, markerma);
+			});
+		}
+		initMap();
+	}
+	if($("#map_fr").length){
+		function initMap() {
+			var mapfr = new google.maps.Map(document.getElementById('map_fr'), { zoom: 12, center: { lat: 48.86899, lng: 2.297008 } });
+
+			/*var contentString = 'Adresse';
+			var infowindow = new google.maps.InfoWindow({
+				content: contentString
+			});*/
+			var markerfr = new google.maps.Marker({
+				position: { lat: 48.86899, lng: 2.297008 },
+				map: mapfr,
+				icon: './images/marker.png'
+			});
+			markerfr.addListener('click', function () {
+				//infowindow.open(mapfr, markerfr);
+			});
+		}
+		initMap();
+	}
+	
+	if(window.location.pathname!=="/") {
+		$(document).on('click', '.nav-link', function(){var nurl = navAffix.find(".nav-link").attr('href');window.location.href = '/';});
+	}
+	
+	$("#submit_btn").click(function(){
+		var n,t,a=$("input[name=name]").val(),
+			i=$("input[name=email]").val(),
+			o=$("input[name=phone]").val(),
+			l=$("select[name=subject] :selected").val(),
+			r=$("textarea[name=message]").val(),
+			s=!0;
+		""==a&&(s=!1),""==i&&(s=!1),""==r&&(s=!1),s&&(n={userName:a,userEmail:i,userTelephone:o,userSubject:l,userMessage:r,captcha:grecaptcha.getResponse()},
+		e.post("contact.php",n,function(n){
+			if("error"==n.type){
+				t='<div class="alert alert-danger" style="padding:10px; margin-bottom:25px;">'+n.text+"</div>"
+			} else {
+				t='<div class="alert alert-success" style="padding:10px; margin-bottom:25px;">'+n.text+"</div>";
+				$("#form-elements input").val("");
+				$("#form-elements textarea").val("");
+		   	}
+			$("#result").hide().html(t).slideDown();
+		},"json"));
+	});
+	$("#form-elements input, #form-elements textarea").keyup(function(){$("#result").slideUp()});
+	
+	$(window).scroll(function () {
+		$(document).scrollTop();
+		$(window).scrollTop() + $(window).height() > $(document).height() - 1100 ? $(".fixedForm").slideUp(300) : $(".fixedForm").slideDown(300);
+		$(window).scrollTop() + $(window).height() > $(window).height() ? $(".fixedForm").addClass("upForm") : $(".fixedForm").removeClass("upForm");
+		$(window).width() < 991 ? $(".fixedForm").addClass("upForm") : "";
+	});
+	
+	$(window).width() < 991 ? $(".fixedForm").addClass("upForm") : "";
+	
+	$(".fixedForm h3").click(function () {
+		$(".fixedForm").toggleClass("upForm");
+	});
+	
+	$(document).on('click', '.menu_footer .scroll', function() {
+		var target = $($(this).attr("href")).length?$(this).attr("href"):'#home';
+		$('html,body').animate({scrollTop: $(target).offset().top - 60}, 500);
+	});
+	if($('#video_popup').length) {
+		$(document).on('click', '.btn_red', function() {
+			var ivideo = '<iframe id="video" width="100%" height="432" src="https://www.youtube-nocookie.com/embed/_VEPbwINNzk?rel=0;autoplay=1&amp;controls=1&amp;loop=1" frameborder="0" allowfullscreen=""></iframe>';
+			$('#video_popup .modal-body').html(ivideo);
+		});
+		$('#video_popup').on('hidden.bs.modal', function (e) {$('#video_popup').find('iframe').remove();});
+	}
+	
+	if($('#msgSent').length) {
+		setTimeout(function(){$('#msgSent').hide();}, 15000);
+	}
+	
+});
